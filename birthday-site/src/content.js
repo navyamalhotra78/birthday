@@ -9,7 +9,7 @@ export const content = {
   cover: {
     headline: "The Aaryan Issue",
     kicker: "Birthday Edition · Vol. 1",
-    photo: "/assets/1.jpeg",
+    photo: `${import.meta.env.BASE_URL}assets/1.jpeg`,
     teasers: [
       "6 Questions Making a Cutesy Quiz",
       "Awards that You've Won This Year",
@@ -22,31 +22,31 @@ export const content = {
       date: "First date",
       title: "Mildly chaotic, mostly perfect",
       caption: "Finally after 3 years of dating (shame)",
-      photo: "/assets/2.jpeg",
+      photo: `${import.meta.env.BASE_URL}assets/2.jpeg`,
     },
     {
       date: "Babies' day out",
       title: "Us and our favourite hobby",
       caption: "Who can say no to ice cream? Not us.",
-      photo: "/assets/3.jpeg",
+      photo: `${import.meta.env.BASE_URL}assets/3.jpeg`,
     },
     {
       date: "First dinner date",
       title: "So much fun",
       caption: "And yes, I'll be wearing heels again. Prepare accordingly.",
-      photo: "/assets/5.jpeg",
+      photo: `${import.meta.env.BASE_URL}assets/5.jpeg`,
     },
     {
       date: "Movie dates",
       title: "The one constant",
       caption: "Never have we ever picked a good one. At least the company is 10/10.",
-      photo: "/assets/4.jpeg",
+      photo: `${import.meta.env.BASE_URL}assets/4.jpeg`,
     },
     {
       date: "Lately",
       title: "The best days are always with you <3",
       caption: "Coffee dates & our little escapades ☕",
-      photo: "/assets/6.jpeg",
+      photo: `${import.meta.env.BASE_URL}assets/6.jpeg`,
     },
   ],
 
