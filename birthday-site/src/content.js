@@ -1,17 +1,19 @@
+import letterText from "./letter.txt?raw";
+
 export const content = {
   name: "Aaryan",
-  age: "24", 
-  from: "Navya", 
+  age: "24",
+  from: "Navya",
   tagline: "A limited edition, one reader only.",
 
   cover: {
     headline: "The Aaryan Issue",
     kicker: "Birthday Edition · Vol. 1",
-    photo: null, 
+    photo: "/assets/1.jpeg",
     teasers: [
-      "Inside: 6 questions you can't fail",
-      "The Awards of the Year",
-      "A letter, sealed until further notice",
+      "6 Questions Making a Cutesy Quiz",
+      "Awards that You've Won This Year",
+      "A Perfect Letter (from me obv)",
     ],
   },
 
@@ -19,62 +21,62 @@ export const content = {
     {
       date: "First date",
       title: "Mildly chaotic, mostly perfect",
-      caption: "Finally after 3 years of dating",
-      photo: null,
+      caption: "Finally after 3 years of dating (shame)",
+      photo: "/assets/2.jpeg",
     },
     {
-       date: "Babies' day out",
+      date: "Babies' day out",
       title: "Us and our favourite hobby",
-      caption: "Who can say not to ice cream",
-      photo: null,
+      caption: "Who can say no to ice cream? Not us.",
+      photo: "/assets/3.jpeg",
     },
     {
       date: "First dinner date",
       title: "So much fun",
-      caption: "But we could barely hear each other over the noise",
-      photo: null,
+      caption: "And yes, I'll be wearing heels again. Prepare accordingly.",
+      photo: "/assets/5.jpeg",
     },
     {
       date: "Movie dates",
       title: "The one constant",
-      caption: "Never have we ever picked a good one",
-      photo: null,
+      caption: "Never have we ever picked a good one. At least the company is 10/10.",
+      photo: "/assets/4.jpeg",
     },
     {
       date: "Lately",
-      title: "The best days are always with you",
-      caption: "Coffee dates",
-      photo: null,
+      title: "The best days are always with you <3",
+      caption: "Coffee dates & our little escapades ☕",
+      photo: "/assets/6.jpeg",
     },
   ],
 
   quiz: [
     {
-      q: "Where was our first date?",
+      q: "We win a free trip tomorrow. Where are we going?",
       options: [
-        { text: "The Mall", right: true, reaction: "Correct! Core memory unlocked 🥹" },
-        { text: "The Park", reaction: "Close, but you know you remember. Try again in your heart." },
-        { text: "A Lunch", reaction: "Shot in the dark I must say." },
+        { text: "A beach, no plans", reaction: "Sunset, sand, zero emails. Booking it." },
+        { text: "Mountains and bad cell service", reaction: "Perfect. Nobody can reach us." },
+        { text: "Anywhere with great food", reaction: "Spoken like a true man of culture." },
       ],
     },
     {
-      q: "What is the ideal Sunday for Aaryan?",
+      q: "Who takes longer to get ready?",
       options: [
-        { text: "Sleeping until it's technically Monday", reaction: "Of course. Respect." },
-        { text: "Food. Then more food.", reaction: "A man of simple, excellent taste." },
-        { text: "A random plan that ends up being the best day", reaction: "Spontaneous king. Noted." },
+        { text: "Me", reaction: "Honest, but I know it's not true." },
+        { text: "You", reaction: "Hmm. Let's say I plead the fifth." },
+        { text: "We both lie about how long it takes", reaction: "This is the correct answer." },
       ],
     },
     {
       q: "Who said \"I love you\" first?",
       options: [
-        { text: "Me", right: false, reaction: "Aww you wish" },
-        { text: "You", reaction: "Obviously 😌" },
-        { text: "We both said it at the same time", reaction: "Romantic. Also unlikely. Let's be real" },
+        { text: "Me", right: false, reaction: "Obviously 😌" },
+        { text: "You", reaction: "Aww you wish" },
+        { text: "We both said it at the same time", reaction: "Let's be real" },
       ],
     },
     {
-      q: "What is his most-used phrase?",
+      q: "What is your most-used phrase?",
       options: [
         { text: "Arey yawr", reaction: "I hear it in my sleep." },
         { text: "Aap sunte hi nahin ho", reaction: "Yes. Every single day." },
@@ -82,42 +84,74 @@ export const content = {
       ],
     },
     {
-      q: "On a scale of 1 to 10, how lucky am I?",
+      q: "How many near-identical photos do we take every time?",
       options: [
-        { text: "10", reaction: "Correct. Modest of you to say it." },
-        { text: "11", reaction: "Even better. Scientifically accurate." },
-        { text: "Off the scale", reaction: "This is the right answer. Moving on." },
+        { text: "3, tops", reaction: "Adorable. And completely wrong." },
+        { text: "About 300", reaction: "Closer. Still modest." },
+        { text: "Until one is perfect (it never is)", reaction: "The camera roll agrees." },
       ],
     },
     {
-      q: "Final question. Who's the best person to celebrate today?",
+      q: "Complete the sentence: \"You're my favourite ___\"",
       options: [
-        { text: "Aaryan", right: true, reaction: "Obviously." },
-        { text: "Aaryan", right: true, reaction: "Still obviously." },
-        { text: "Aaryan (and cake)", right: true, reaction: "Now you've understood the assignment 🎂" },
+        { text: "Person", right: true, reaction: "Right. And that's the whole point. 🥹" },
+        { text: "Chaos", right: true, reaction: "Also right. A beautiful kind of chaos." },
+        { text: "Reason to smile", right: true, reaction: "I'm not crying, you are." },
+      ],
+    },
+    {
+      q: "On a scale of 1 to 10, how much do I love you?",
+      options: [
+        { text: "10", right: true, reaction: "Solid. But you can go higher." },
+        { text: "11", right: true, reaction: "Now we're getting closer." },
+        { text: "Immeasurable", right: true, reaction: "Correct. The scale gave up." },
+      ],
+    },
+    {
+      q: "Last one. What does the birthday boy want today?",
+      options: [
+        { text: "Cake", right: true, reaction: "Granted. 🎂" },
+        { text: "A very long nap", right: true, reaction: "Granted. After the cake." },
+        { text: "Me, obviously", right: true, reaction: "Granted. All three. Check the end of the issue." },
       ],
     },
   ],
 
   awardsTitle: "The Awards of the Year",
   awards: [
-    { title: "Most Likely To Steal My Fries", note: "Sometimes I love them more than you." },
-    { title: "Best Supporting Role In My Life", note: "Lead role, actually." },
-     { title: "Smiling in Photos Like I'm Holding You Hostage", note: "It's been eight years now come on." },
-    { title: "Hugs and kisses, Gold Medal", note: "Undefeated." },
+    { title: "The Great French Fry Heist Award", note: "For someone who eats my fries despite having his own." },
+    { title: "Best Supporting Role In My Life", note: "Lead role, actually.The rest of the cast is just here for decoration." },
+    { title: "For Smiling in Photos Like I'm Holding You Hostage", note: "It's been eight years now, come on." },
+    { title: "Lifetime Achievement in Hugs & Kisses", note: "Undefeated, supreme winner." },
   ],
+
+  dreams: {
+    eyebrow: "The next chapter",
+    title: "Things We're Going To Do",
+    sub: "A list I plan to keep long and running forever.",
+    items: [
+      { emoji: "✈️", text: "Finally take a trip together" },
+      { emoji: "🌅", text: "Watch both the sunset and sunrise together" },
+      { emoji: "🍜", text: "Try out all the new restaurants we've saved" },
+      { emoji: "🎤", text: "Go to concert, have the best time and take a million blurry pictures" },
+      { emoji: "🏔️", text: "A hike I'll complain about and you'll love" },
+      { emoji: "🏡", text: "Keep finding new things to do together, even when we're old and boring." },
+    ],
+  },
 
   letter: {
     greeting: "Dear Aaryan,",
-    body: [
-     "Imagine something is written for now."
-    ],
-    signoff: "Happy birthday, always yours,",
+    body: letterText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
+    signoff: "Yours,",
   },
 
   gift: {
     label: "One more thing…",
-    title: "Your gift is on it's way",
-    text: "Although I am the best gift you can ever have, your smaller gift is on it's way. Be patient, good things take time. ",
+    title: "Your gift is en route 🎁",
+    text: "Although, technically, you've already received the best gift: me, the other one is on its way. Please allow time for shipping and my excellent gift-giving skills. ",
+  },
+
+  wrap: {
+    headline: "Thank you for being my favourite plotline.",
   },
 };

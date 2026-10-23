@@ -9,7 +9,7 @@ const store = {
     } catch { return d; }
   },
   set(k, v) {
-    try { localStorage.setItem("aaryan:" + k, JSON.stringify(v)); } catch {}
+    try { localStorage.setItem("aaryan:" + k, JSON.stringify(v)); } catch { }
   },
 };
 
@@ -20,7 +20,7 @@ try {
       .filter((k) => k.startsWith("aaryan:"))
       .forEach((k) => localStorage.removeItem(k));
   }
-} catch {}
+} catch { }
 
 function usePersisted(key, initial) {
   const [v, setV] = useState(() => store.get(key, initial));
@@ -99,20 +99,6 @@ function Confetti({ run }) {
   );
 }
 
-function Typed({ text, onDone, speed = 28 }) {
-  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const [n, setN] = useState(reduce ? text.length : 0);
-  useEffect(() => {
-    if (n >= text.length) {
-      onDone?.();
-      return;
-    }
-    const t = setTimeout(() => setN(n + 1), speed);
-    return () => clearTimeout(t);
-  }, [n]);
-  return <>{text.slice(0, n)}</>;
-}
-
 /* ---------- sections ---------- */
 
 function Cover({ onOpen, opened }) {
@@ -184,16 +170,22 @@ function Quiz({ onDone }) {
   const option = picked !== null ? q.options[picked] : null;
   const hasRight = q.options.some((o) => o.right === true);
   const gotIt = option && (!hasRight || option.right === true);
+  const isLast = i + 1 === qs.length;
 
-  const next = () => {
-    if (i + 1 < qs.length) {
-      setI(i + 1);
-      setPicked(null);
-    } else {
-      setFinished(true);
-      onDone();
-    }
+  const finish = () => {
+    setFinished(true);
+    onDone();
   };
+
+  // auto-advance a moment after a good answer (but not on the last question)
+  useEffect(() => {
+    if (!gotIt || isLast) return;
+    const t = setTimeout(() => {
+      setI((n) => n + 1);
+      setPicked(null);
+    }, 1800);
+    return () => clearTimeout(t);
+  }, [picked, i]);
 
   return (
     <section className="section quiz-sec">
@@ -236,9 +228,9 @@ function Quiz({ onDone }) {
             <div className="reaction" aria-live="polite">
               {option && <p>{option.reaction}</p>}
             </div>
-            {gotIt && (
-              <button className="btn" onClick={next}>
-                {i + 1 < qs.length ? "Next →" : "See my result →"}
+            {gotIt && isLast && (
+              <button className="btn" onClick={finish}>
+                See my results →
               </button>
             )}
           </>
@@ -270,21 +262,57 @@ function Awards() {
   );
 }
 
+function Typed({ text, onDone, speed = 28 }) {
+  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const [n, setN] = useState(reduce ? text.length : 0);
+  useEffect(() => {
+    if (n >= text.length) {
+      onDone?.();
+      return;
+    }
+    const t = setTimeout(() => setN(n + 1), speed);
+    return () => clearTimeout(t);
+  }, [n]);
+  return <>{text.slice(0, n)}</>;
+}
+
 function Letter({ unlocked }) {
   const [open, setOpen] = useState(false);
   const [boom, setBoom] = useState(false);
-  const [step, setStep] = useState(0);
+  const [seen, setSeen] = useState(false);
+  const [greetDone, setGreetDone] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const l = content.letter;
   const g = content.gift;
-  const parts = [l.greeting, ...l.body, l.signoff, content.from];
 
   const openIt = () => {
     if (!unlocked) return;
-    setStep(0);
+    setGreetDone(false);
     setOpen(true);
-    setBoom(true);
-    setTimeout(() => setBoom(false), 6000);
+    if (!seen) {
+      setBoom(true);
+      setTimeout(() => setBoom(false), 6000);
+    }
+    setSeen(true);
   };
+  const close = () => setOpen(false);
+
+  // once the letter has been read and closed, reveal the gift + wrap-up
+  useEffect(() => {
+    if (seen && !open) setRevealed(true);
+  }, [seen, open]);
+
+  // lock page scroll + close on Escape while the letter is open
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
     <section className="section letter-sec">
@@ -294,52 +322,110 @@ function Letter({ unlocked }) {
         <h2>For you</h2>
       </Reveal>
 
-      {!open ? (
-        <Reveal>
-          <button
-            className={`envelope ${unlocked ? "ready" : "locked"}`}
-            onClick={openIt}
-            disabled={!unlocked}
-          >
-            <span className="env-icon">{unlocked ? "💌" : "🔒"}</span>
-            <span className="env-text">
-              {unlocked ? "Tap to open" : "Finish the quiz to unlock"}
-            </span>
-          </button>
-        </Reveal>
-      ) : (
-        <div className="letter" onClick={() => setStep(parts.length)}>
-          {parts.map((p, idx) => {
-            if (idx > step) return null;
-            const cls =
-              idx === 0
-                ? "greet"
-                : idx === parts.length - 2
-                ? "signoff"
-                : idx === parts.length - 1
-                ? "from"
-                : "";
-            return (
-              <p key={idx} className={cls}>
-                {idx === step ? (
-                  <Typed text={p} onDone={() => setStep((s) => s + 1)} />
-                ) : (
-                  p
-                )}
-              </p>
-            );
-          })}
-          {step < parts.length && <small className="skip">tap to skip</small>}
-        </div>
-      )}
+      <Reveal>
+        <button
+          className={`envelope ${unlocked ? "ready" : "locked"}`}
+          onClick={openIt}
+          disabled={!unlocked}
+        >
+          <span className="env-icon">{unlocked ? "💌" : "🔒"}</span>
+          <span className="env-text">
+            {!unlocked ? "Finish the quiz to unlock" : seen ? "Read it again" : "Tap to open"}
+          </span>
+        </button>
+      </Reveal>
 
-      {open && g && step >= parts.length && (
+      {revealed && g && (
         <div className="gift">
           <small>{g.label}</small>
           <h3>{g.title}</h3>
           <p>{g.text}</p>
         </div>
       )}
+
+      {revealed && (
+        <div className="wrap">
+          <p className="eyebrow">That's a wrap on Issue {content.age}</p>
+          <h2>{content.wrap.headline}</h2>
+        </div>
+      )}
+
+      {open && (
+        <div className="modal" onClick={close} role="dialog" aria-modal="true" aria-label="Letter">
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-x" onClick={close} aria-label="Close letter">×</button>
+            <div className="letter-body">
+              <p className="greet">
+                <Typed text={l.greeting} onDone={() => setGreetDone(true)} />
+              </p>
+              <div className={`letter-rest ${greetDone ? "in" : ""}`}>
+                {l.body.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+                <p className="signoff">{l.signoff}</p>
+                <p className="from">{content.from}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Dreams() {
+  const d = content.dreams;
+  const [mine, setMine] = usePersisted("dreams", []);
+  const [draft, setDraft] = useState("");
+
+  const add = (e) => {
+    e.preventDefault();
+    const text = draft.trim();
+    if (!text) return;
+    setMine([...mine, { id: Date.now(), text }]);
+    setDraft("");
+  };
+
+  return (
+    <section className="section dreams-sec">
+      <Reveal>
+        <p className="eyebrow">{d.eyebrow}</p>
+        <h2>{d.title}</h2>
+        <p className="sub">{d.sub}</p>
+      </Reveal>
+
+      <div className="dream-grid">
+        {d.items.map((x, i) => (
+          <Reveal key={i} className={`dream tone-${i % 4}`}>
+            <span className="dream-emoji">{x.emoji}</span>
+            <p>{x.text}</p>
+          </Reveal>
+        ))}
+        {mine.map((x, i) => (
+          <div key={x.id} className={`dream mine tone-${(d.items.length + i) % 4}`}>
+            <span className="dream-emoji">💭</span>
+            <p>{x.text}</p>
+            <button
+              className="dream-x"
+              aria-label="Remove"
+              onClick={() => setMine(mine.filter((m) => m.id !== x.id))}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <form className="dream-add" onSubmit={add}>
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Add something you want us to do…"
+          maxLength={80}
+          aria-label="Add a dream"
+        />
+        <button className="btn" type="submit">Add</button>
+      </form>
     </section>
   );
 }
@@ -392,14 +478,55 @@ function Gate({ children }) {
   return open ? children : <Countdown target={target} />;
 }
 
+function Music({ audioRef }) {
+  const [on, setOn] = useState(false);
+
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      a.volume = 0.6;
+      a.play().catch(() => { });
+    } else {
+      a.pause();
+    }
+  };
+
+  return (
+    <>
+      <audio
+        ref={audioRef}
+        src="/music.mp3"
+        loop
+        preload="auto"
+        onPlay={() => setOn(true)}
+        onPause={() => setOn(false)}
+      />
+      <button
+        className={`music ${on ? "playing" : ""}`}
+        onClick={toggle}
+        aria-label={on ? "Pause music" : "Play music"}
+      >
+        {on ? "⏸" : "🎵"}
+      </button>
+    </>
+  );
+}
+
 /* ---------- app ---------- */
 
 function Site() {
   const [opened, setOpened] = usePersisted("opened", false);
   const [quizDone, setQuizDone] = usePersisted("quizDone", false);
   const bodyRef = useRef(null);
+  const audioRef = useRef(null);
 
   const open = () => {
+    const a = audioRef.current;
+    if (a) {
+      a.volume = 0.6;
+      a.play().catch(() => { });
+    }
     setOpened(true);
     setTimeout(
       () => bodyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
@@ -409,12 +536,14 @@ function Site() {
 
   return (
     <div className="page">
+      <Music audioRef={audioRef} />
       <Cover opened={opened} onOpen={open} />
       {opened && (
         <main ref={bodyRef}>
           <Timeline />
           <Quiz onDone={() => setQuizDone(true)} />
           <Awards />
+          <Dreams />
           <Letter unlocked={quizDone} />
           <footer className="foot">
             Printed with love · The {content.name} Issue · Limited to one reader
